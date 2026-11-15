@@ -1,3 +1,11 @@
+import { useBrandTheme } from "../../context/ThemeContext";
+
 export function Brand() {
-  return <span className="brand-name">_ITS_R<span>U</span>NU_</span>
+  const { brandColor } = useBrandTheme();
+
+  return (
+    <span className="brand-name">
+      _ITS_R<span style={{ color: brandColor }}>U</span>NU_
+    </span>
+  );
 }

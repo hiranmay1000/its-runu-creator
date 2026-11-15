@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Camera, Menu, X } from "lucide-react";
 import { Brand } from "./Brand";
+import { useBrandTheme } from "../../context/ThemeContext";
 
 const navigation = [
   ["Home", "/"],
@@ -13,9 +14,15 @@ const navigation = [
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
+  const { brandColor } = useBrandTheme();
 
   return (
-    <header className="header">
+    <header
+      className="header"
+      style={{
+        backgroundColor: `color-mix(in srgb, ${brandColor} 25%, transparent)`,
+      }}
+    >
       <a className="brand" href="/" onClick={closeMenu}>
         <Brand />
       </a>

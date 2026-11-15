@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { extractImageColors } from "../../utils/extractImageColor";
+import { useBrandTheme } from "../../context/ThemeContext";
 
 const heroSlides = [
   {
@@ -76,6 +77,7 @@ const defaultTheme = {
 };
 
 export function HeroSection() {
+  const { setBrandColor } = useBrandTheme();
   const [slideIndex, setSlideIndex] = useState(0);
   const [theme, setTheme] = useState(defaultTheme);
 
@@ -88,6 +90,7 @@ export function HeroSection() {
     const updateTheme = async () => {
       try {
         const colors = await extractImageColors(slide.image);
+        setBrandColor(colors.background); // Update the brand color in the context
 
         if (!cancelled) {
           setTheme(colors);
@@ -122,7 +125,7 @@ export function HeroSection() {
   }, []);
 
   const themeStyles = {
-    "--hero-background": theme.background,
+    "--hero-background": `color-mix(in srgb, ${theme.background} 50%, transparent)`,
     "--hero-sun": theme.sun,
     "--hero-accent": theme.accent,
   } as CSSProperties;
