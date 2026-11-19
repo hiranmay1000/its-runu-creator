@@ -1,5 +1,5 @@
-import { CollabPage } from "../pages/CollabPage"
-import { HomePage } from "../pages/HomePage"
+import { CollabPage } from "../pages/collabpage"
+import { HomePage } from "../pages/homepage"
 
 export function AppRoutes() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/"
