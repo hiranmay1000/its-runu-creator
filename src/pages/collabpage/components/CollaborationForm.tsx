@@ -40,10 +40,11 @@ interface CollaborationFormProps {
 
 // Consistent editorial-style inputs
 const inputClass =
-  "w-full rounded-none border border-[#dcd8d0] bg-[#fbfaf8] px-4 py-3.5 text-sm text-[#222] outline-none transition-colors duration-200 placeholder:text-neutral-400 hover:border-[#999] focus:border-[#18005b] focus:ring-1 focus:ring-[#18005b]/10"
+  "w-full border border-[#e8e5ed] bg-[#faf9fc] px-4 py-3.5 text-sm text-[#24202e] outline-none transition-all duration-300 placeholder:text-[#aaa5b2] hover:border-[#c9c1d8] hover:bg-white focus:border-[#18005b] focus:bg-white focus:ring-4 focus:ring-[#18005b]/[0.06]"
 
 const labelClass =
-  "mb-2 block text-[11px] font-semibold uppercase tracking-[1.2px] text-neutral-600"
+  "mb-2.5 block text-[11px] font-bold uppercase tracking-[1.4px] text-[#51485b]"
+
 
 //   const selectedService = SERVICE_OPTIONS.find(
 //   (option) => option.label === form.service
@@ -54,34 +55,60 @@ const labelClass =
 // )
 
 // Reusable section
+
+
 function Section({
   number,
   title,
   description,
   children,
+  rightContent,
 }: {
   number: string
   title: string
   description?: string
   children: ReactNode
+  rightContent?: ReactNode
+  disabled?: boolean
 }) {
   return (
-    <section className="border border-[#dcd8d0] bg-[#fbfaf8] p-5 sm:p-7">
-      <div className="mb-6 flex items-start gap-4 border-b border-[#e5e1da] pb-5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#18005b] text-[10px] font-semibold tracking-wider text-white">
+    <section
+      className="
+        relative overflow-hidden
+        border border-[#eeebf1]
+        bg-white
+        p-5 sm:p-8
+        shadow-[0_4px_20px_rgba(32,20,60,0.045)]
+        transition-all duration-300
+        hover:shadow-[0_8px_30px_rgba(32,20,60,0.075)]
+      "
+    >
+      <div className="mb-7 flex items-start gap-4 border-b border-[#f0edf3] pb-6">
+        <span
+          className="
+            flex h-10 w-10 shrink-0 items-center justify-center
+            bg-[#222]
+            text-[11px] font-bold tracking-wider text-white
+            shadow-[0_4px_12px_rgba(89,64,120,0.18)]
+          "
+        >
           {number}
         </span>
 
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold tracking-tight text-[#222]">
-            {title}
-          </h3>
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-base font-bold tracking-tight text-[#222] sm:text-lg">
+              {title}
+            </h3>
 
-          {description && (
-            <p className="mt-1 text-xs leading-relaxed text-neutral-500 sm:text-sm">
-              {description}
-            </p>
-          )}
+            {description && (
+              <p className="mt-1.5 text-xs leading-relaxed text-[#222] sm:text-sm">
+                {description}
+              </p>
+            )}
+          </div>
+
+          {rightContent}
         </div>
       </div>
 
@@ -89,6 +116,8 @@ function Section({
     </section>
   )
 }
+
+
 
 export function CollaborationForm({
   form,
@@ -108,11 +137,15 @@ export function CollaborationForm({
     (option) => option.label === form.service
   )
 
+  const hasSelectedService = Boolean(
+    form.service?.trim() && selectedService
+  )
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="w-full max-w-4xl space-y-6"
-    >
+      <form
+        onSubmit={onSubmit}
+        className="w-full max-w-4xl space-y-7"
+      >
       {/* 01 — Contact Information */}
       <Section
         number="01"
@@ -213,102 +246,106 @@ export function CollaborationForm({
 
       {/* 03 — Campaign Scope */}
       {isPromotional && (
-        <Section
-          number="03"
-          title="Campaign scope"
-          description="Choose the social platforms and content deliverables."
-        >
-          <div className="mb-5 flex items-center justify-between border border-[#e5e1da] bg-white px-4 py-3">
-            <span className="text-xs text-neutral-600">
-              Selected deliverables
-            </span>
+        
+<Section
+  number="03"
+  title="Campaign scope"
+  description="Choose the social platforms and content deliverables."
+  rightContent={
+    <span className="shrink-0 rounded-lg bg-[#18005b] px-3 py-1.5 text-xs font-bold tabular-nums text-white shadow-sm">
+      {totalSelectedFormats}
+    </span>
+  }
+>
+  <div className="space-y-4">
+    {PLATFORM_CONFIGS.map((platform) => {
+      const selectedFormats =
+        form.platformDeliverables[platform.id]
 
-            <span className="bg-[#18005b] px-3 py-1 text-xs font-semibold tabular-nums text-white">
-              {totalSelectedFormats}
+      return (
+        <div
+          key={platform.id}
+          className="
+            rounded-xl
+            border border-[#eeebf1]
+            bg-[#fdfcfe]
+            p-4 sm:p-6
+            shadow-[0_2px_10px_rgba(32,20,60,0.025)]
+            transition-all duration-300
+            hover:border-[#d9d2e5]
+            hover:bg-white
+            hover:shadow-[0_5px_18px_rgba(32,20,60,0.06)]
+          "
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#eeeae3] bg-[#fbfaf8]">
+              <PlatformLogo
+                platform={platform.id}
+                active={selectedFormats.length > 0}
+              />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h4 className="text-sm font-semibold text-[#222]">
+                {platform.label}
+              </h4>
+
+              <p className="mt-0.5 text-xs text-neutral-500">
+                {platform.tagline}
+              </p>
+            </div>
+
+            <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+              {selectedFormats.length > 0
+                ? `${selectedFormats.length} selected`
+                : "Optional"}
             </span>
           </div>
 
-          <div className="space-y-4">
-            {PLATFORM_CONFIGS.map((platform) => {
-              const selectedFormats =
-                form.platformDeliverables[platform.id]
+          <div className="flex flex-wrap gap-2">
+            {platform.formats.map((format) => {
+              const selected = selectedFormats.includes(format)
 
               return (
-                <div
-                  key={platform.id}
-                  className="border border-[#e5e1da] bg-white p-4 sm:p-5"
+                <button
+                  key={format}
+                  type="button"
+                  onClick={() =>
+                    onTogglePlatformFormat(platform.id, format)
+                  }
+                  aria-pressed={selected}
+                  className={`inline-flex min-h-10 items-center gap-2.5 rounded-lg border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
+                    selected
+                      ? "border-[#18005b] bg-[#18005b] text-white shadow-[0_3px_10px_rgba(24,0,91,0.15)]"
+                      : "border-[#dcd8d0] bg-[#fbfaf8] text-neutral-600 hover:border-[#18005b] hover:bg-white hover:text-[#18005b]"
+                  }`}
                 >
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#eeeae3] bg-[#fbfaf8]">
-                      <PlatformLogo
-                        platform={platform.id}
-                        active={selectedFormats.length > 0}
+                  <span
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-all duration-200 ${
+                      selected
+                        ? "border-white bg-white"
+                        : "border-[#aaa49a] bg-transparent"
+                    }`}
+                  >
+                    {selected && (
+                      <Check
+                        size={12}
+                        strokeWidth={3}
+                        className="text-[#18005b]"
                       />
-                    </div>
+                    )}
+                  </span>
 
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-semibold text-[#222]">
-                        {platform.label}
-                      </h4>
-
-                      <p className="mt-0.5 text-xs text-neutral-500">
-                        {platform.tagline}
-                      </p>
-                    </div>
-
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-500">
-                      {selectedFormats.length > 0
-                        ? `${selectedFormats.length} selected`
-                        : "Optional"}
-                    </span>
-                  </div>
-
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {platform.formats.map((format) => {
-                      const selected = selectedFormats.includes(format)
-
-                      return (
-                        <button
-                          key={format}
-                          type="button"
-                          onClick={() =>
-                            onTogglePlatformFormat(platform.id, format)
-                          }
-                          aria-pressed={selected}
-                          className={`inline-flex min-h-10 items-center gap-2.5 border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
-                            selected
-                              ? "border-[#18005b] bg-[#18005b] text-white"
-                              : "border-[#dcd8d0] bg-[#fbfaf8] text-neutral-600 hover:border-[#18005b] hover:text-[#18005b]"
-                          }`}
-                        >
-                          <span
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center border transition-all duration-200 ${
-                              selected
-                                ? "border-white bg-white"
-                                : "border-[#aaa49a] bg-transparent"
-                            }`}
-                          >
-                            {selected && (
-                              <Check
-                                size={12}
-                                strokeWidth={3}
-                                className="text-[#18005b]"
-                              />
-                            )}
-                          </span>
-
-                          {format}
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                </div>
+                  {format}
+                </button>
               )
             })}
           </div>
-        </Section>
+        </div>
+      )
+    })}
+  </div>
+</Section>
       )}
 
       {/* service: "", */}
@@ -402,6 +439,7 @@ export function CollaborationForm({
             : "Your campaign brief"
         }
         description="Share your expectations so we can plan the collaboration."
+        disabled={!hasSelectedService}
       >
         <label htmlFor="description" className={labelClass}>
           {isEventAppearance
