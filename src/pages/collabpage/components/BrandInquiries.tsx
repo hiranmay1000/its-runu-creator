@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, type TouchEvent } from "react"
-import { AlertCircle, Building2, Mail } from "lucide-react"
-import type { InquiryEntry } from "../types"
+import { useEffect, useRef, useState, type TouchEvent } from "react";
+import { AlertCircle, Building2, Mail } from "lucide-react";
+import type { InquiryEntry } from "../types";
 
 interface BrandInquiriesProps {
-  entries: InquiryEntry[]
-  fetchingEntries: boolean
-  entriesError: string
+  entries: InquiryEntry[];
+  fetchingEntries: boolean;
+  entriesError: string;
 }
 
 export function BrandInquiries({
@@ -13,70 +13,70 @@ export function BrandInquiries({
   fetchingEntries,
   entriesError,
 }: BrandInquiriesProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [visibleCards, setVisibleCards] = useState(3)
-  const [isPaused, setIsPaused] = useState(false)
-  const touchStartX = useRef<number | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const updateVisibleCards = () => {
       if (window.innerWidth < 640) {
-        setVisibleCards(1)
+        setVisibleCards(1);
       } else if (window.innerWidth < 1024) {
-        setVisibleCards(2)
+        setVisibleCards(2);
       } else {
-        setVisibleCards(3)
+        setVisibleCards(3);
       }
-    }
+    };
 
-    updateVisibleCards()
-    window.addEventListener("resize", updateVisibleCards)
-    return () => window.removeEventListener("resize", updateVisibleCards)
-  }, [])
+    updateVisibleCards();
+    window.addEventListener("resize", updateVisibleCards);
+    return () => window.removeEventListener("resize", updateVisibleCards);
+  }, []);
 
-  const maxIndex = Math.max(0, entries.length - visibleCards)
-  const currentSlideIndex = Math.min(currentIndex, maxIndex)
+  const maxIndex = Math.max(0, entries.length - visibleCards);
+  const currentSlideIndex = Math.min(currentIndex, maxIndex);
 
   useEffect(() => {
-    if (isPaused || entries.length <= visibleCards) return
+    if (isPaused || entries.length <= visibleCards) return;
 
     const interval = window.setInterval(() => {
-      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
-    }, 3500)
+      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    }, 3500);
 
-    return () => window.clearInterval(interval)
-  }, [isPaused, entries.length, visibleCards, maxIndex])
+    return () => window.clearInterval(interval);
+  }, [isPaused, entries.length, visibleCards, maxIndex]);
 
   const handlePrevSlide = () => {
-    setCurrentIndex(currentSlideIndex <= 0 ? maxIndex : currentSlideIndex - 1)
-  }
+    setCurrentIndex(currentSlideIndex <= 0 ? maxIndex : currentSlideIndex - 1);
+  };
 
   const handleNextSlide = () => {
-    setCurrentIndex(currentSlideIndex >= maxIndex ? 0 : currentSlideIndex + 1)
-  }
+    setCurrentIndex(currentSlideIndex >= maxIndex ? 0 : currentSlideIndex + 1);
+  };
 
   const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = event.touches[0].clientX
-    setIsPaused(true)
-  }
+    touchStartX.current = event.touches[0].clientX;
+    setIsPaused(true);
+  };
 
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
-    if (touchStartX.current === null) return
-    const deltaX = event.changedTouches[0].clientX - touchStartX.current
+    if (touchStartX.current === null) return;
+    const deltaX = event.changedTouches[0].clientX - touchStartX.current;
     if (Math.abs(deltaX) > 40) {
       if (deltaX < 0) {
-        handleNextSlide()
+        handleNextSlide();
       } else {
-        handlePrevSlide()
+        handlePrevSlide();
       }
     }
-    touchStartX.current = null
-    setIsPaused(false)
-  }
+    touchStartX.current = null;
+    setIsPaused(false);
+  };
 
   return (
     <div
-      className="mt-20 border-t border-[#dcd8d0] pt-12 sm:mt-24 sm:pt-16 md:mt-32 md:pt-20"
+      className="mt-20 border-t border-[#dcd8d0] pt-12 sm:mt-24 sm:pt-16 md:mt-3 md:pt-20"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -156,10 +156,7 @@ export function BrandInquiries({
 
                     <div className="mt-5 border-t border-[#ebe7df] pt-4 text-xs text-neutral-600 sm:mt-6">
                       <div className="flex items-center gap-2.5">
-                        <Mail
-                          size={14}
-                          className="shrink-0 text-neutral-400"
-                        />
+                        <Mail size={14} className="shrink-0 text-neutral-400" />
                         <span className="truncate font-mono tracking-tight">
                           {entry.email}
                         </span>
@@ -191,5 +188,5 @@ export function BrandInquiries({
         </div>
       )}
     </div>
-  )
+  );
 }

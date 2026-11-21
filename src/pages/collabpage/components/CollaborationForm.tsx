@@ -1,10 +1,4 @@
-
-import type {
-  FormEvent,
-  Dispatch,
-  SetStateAction,
-  ReactNode,
-} from "react"
+import type { FormEvent, Dispatch, SetStateAction, ReactNode } from "react";
 
 import {
   AlertCircle,
@@ -12,39 +6,34 @@ import {
   Check,
   CheckCircle,
   ChevronDown,
-} from "lucide-react"
+} from "lucide-react";
 
-import { PLATFORM_CONFIGS, SERVICE_OPTIONS } from "../constants"
-import type {
-  CollabFormState,
-  PlatformId,
-  SubmitStatus,
-} from "../types"
+import { PLATFORM_CONFIGS, SERVICE_OPTIONS } from "../constants";
+import type { CollabFormState, PlatformId, SubmitStatus } from "../types";
 
-import { PlatformLogo } from "./PlatformLogo"
+import { PlatformLogo } from "./PlatformLogo";
 
 interface CollaborationFormProps {
-  form: CollabFormState
-  setForm: Dispatch<SetStateAction<CollabFormState>>
-  isPromotional: boolean
-  isEventAppearance: boolean
-  totalSelectedFormats: number
-  validationError: string
-  clearValidationError: () => void
-  loading: boolean
-  status: SubmitStatus
-  onServiceChange: (serviceLabel: string) => void
-  onTogglePlatformFormat: (platformId: PlatformId, format: string) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
+  form: CollabFormState;
+  setForm: Dispatch<SetStateAction<CollabFormState>>;
+  isPromotional: boolean;
+  isEventAppearance: boolean;
+  totalSelectedFormats: number;
+  validationError: string;
+  clearValidationError: () => void;
+  loading: boolean;
+  status: SubmitStatus;
+  onServiceChange: (serviceLabel: string) => void;
+  onTogglePlatformFormat: (platformId: PlatformId, format: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 // Consistent editorial-style inputs
 const inputClass =
-  "w-full border border-[#e8e5ed] bg-[#faf9fc] px-4 py-3.5 text-sm text-[#24202e] outline-none transition-all duration-300 placeholder:text-[#aaa5b2] hover:border-[#c9c1d8] hover:bg-white focus:border-[#18005b] focus:bg-white focus:ring-4 focus:ring-[#18005b]/[0.06]"
+  "w-full border border-[#e8e5ed] bg-[#faf9fc] px-4 py-3.5 text-sm text-[#24202e] outline-none transition-all duration-300 placeholder:text-[#aaa5b2] hover:border-[#c9c1d8] hover:bg-white focus:border-[#18005b] focus:bg-white focus:ring-4 focus:ring-[#18005b]/[0.06]";
 
 const labelClass =
-  "mb-2.5 block text-[11px] font-bold uppercase tracking-[1.4px] text-[#51485b]"
-
+  "mb-2.5 block text-[11px] font-bold uppercase tracking-[1.4px] text-[#51485b]";
 
 //   const selectedService = SERVICE_OPTIONS.find(
 //   (option) => option.label === form.service
@@ -56,7 +45,6 @@ const labelClass =
 
 // Reusable section
 
-
 function Section({
   number,
   title,
@@ -64,12 +52,12 @@ function Section({
   children,
   rightContent,
 }: {
-  number: string
-  title: string
-  description?: string
-  children: ReactNode
-  rightContent?: ReactNode
-  disabled?: boolean
+  number: string;
+  title: string;
+  description?: string;
+  children: ReactNode;
+  rightContent?: ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <section
@@ -114,10 +102,8 @@ function Section({
 
       {children}
     </section>
-  )
+  );
 }
-
-
 
 export function CollaborationForm({
   form,
@@ -134,18 +120,13 @@ export function CollaborationForm({
   onSubmit,
 }: CollaborationFormProps) {
   const selectedService = SERVICE_OPTIONS.find(
-    (option) => option.label === form.service
-  )
+    (option) => option.label === form.service,
+  );
 
-  const hasSelectedService = Boolean(
-    form.service?.trim() && selectedService
-  )
+  const hasSelectedService = Boolean(form.service?.trim() && selectedService);
 
   return (
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-4xl space-y-7"
-      >
+    <form onSubmit={onSubmit} className="w-full max-w-4xl space-y-7">
       {/* 01 — Contact Information */}
       <Section
         number="01"
@@ -232,10 +213,7 @@ export function CollaborationForm({
 
         {selectedService?.subtitle && (
           <div className="mt-4 flex items-start gap-3 border-l-2 border-[#18005b] bg-[#f1eee8] px-4 py-3">
-            <CheckCircle
-              size={15}
-              className="mt-0.5 shrink-0 text-[#18005b]"
-            />
+            <CheckCircle size={15} className="mt-0.5 shrink-0 text-[#18005b]" />
 
             <p className="text-xs leading-relaxed text-neutral-600">
               {selectedService.subtitle}
@@ -246,27 +224,24 @@ export function CollaborationForm({
 
       {/* 03 — Campaign Scope */}
       {isPromotional && (
-        
-<Section
-  number="03"
-  title="Campaign scope"
-  description="Choose the social platforms and content deliverables."
-  rightContent={
-    <span className="shrink-0 rounded-lg bg-[#18005b] px-3 py-1.5 text-xs font-bold tabular-nums text-white shadow-sm">
-      {totalSelectedFormats}
-    </span>
-  }
->
-  <div className="space-y-4">
-    {PLATFORM_CONFIGS.map((platform) => {
-      const selectedFormats =
-        form.platformDeliverables[platform.id]
+        <Section
+          number="03"
+          title="Campaign scope"
+          description="Choose the social platforms and content deliverables."
+          rightContent={
+            <span className="shrink-0 bg-[#18005b] px-3 py-1.5 text-xs font-bold tabular-nums text-white shadow-sm">
+              {totalSelectedFormats}
+            </span>
+          }
+        >
+          <div className="space-y-4">
+            {PLATFORM_CONFIGS.map((platform) => {
+              const selectedFormats = form.platformDeliverables[platform.id];
 
-      return (
-        <div
-          key={platform.id}
-          className="
-            rounded-xl
+              return (
+                <div
+                  key={platform.id}
+                  className="
             border border-[#eeebf1]
             bg-[#fdfcfe]
             p-4 sm:p-6
@@ -276,76 +251,76 @@ export function CollaborationForm({
             hover:bg-white
             hover:shadow-[0_5px_18px_rgba(32,20,60,0.06)]
           "
-        >
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#eeeae3] bg-[#fbfaf8]">
-              <PlatformLogo
-                platform={platform.id}
-                active={selectedFormats.length > 0}
-              />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h4 className="text-sm font-semibold text-[#222]">
-                {platform.label}
-              </h4>
-
-              <p className="mt-0.5 text-xs text-neutral-500">
-                {platform.tagline}
-              </p>
-            </div>
-
-            <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
-              {selectedFormats.length > 0
-                ? `${selectedFormats.length} selected`
-                : "Optional"}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {platform.formats.map((format) => {
-              const selected = selectedFormats.includes(format)
-
-              return (
-                <button
-                  key={format}
-                  type="button"
-                  onClick={() =>
-                    onTogglePlatformFormat(platform.id, format)
-                  }
-                  aria-pressed={selected}
-                  className={`inline-flex min-h-10 items-center gap-2.5 rounded-lg border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
-                    selected
-                      ? "border-[#18005b] bg-[#18005b] text-white shadow-[0_3px_10px_rgba(24,0,91,0.15)]"
-                      : "border-[#dcd8d0] bg-[#fbfaf8] text-neutral-600 hover:border-[#18005b] hover:bg-white hover:text-[#18005b]"
-                  }`}
                 >
-                  <span
-                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-all duration-200 ${
-                      selected
-                        ? "border-white bg-white"
-                        : "border-[#aaa49a] bg-transparent"
-                    }`}
-                  >
-                    {selected && (
-                      <Check
-                        size={12}
-                        strokeWidth={3}
-                        className="text-[#18005b]"
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#eeeae3] bg-[#fbfaf8]">
+                      <PlatformLogo
+                        platform={platform.id}
+                        active={selectedFormats.length > 0}
                       />
-                    )}
-                  </span>
+                    </div>
 
-                  {format}
-                </button>
-              )
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-sm font-semibold text-[#222]">
+                        {platform.label}
+                      </h4>
+
+                      <p className="mt-0.5 text-xs text-neutral-500">
+                        {platform.tagline}
+                      </p>
+                    </div>
+
+                    <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+                      {selectedFormats.length > 0
+                        ? `${selectedFormats.length} selected`
+                        : "Optional"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {platform.formats.map((format) => {
+                      const selected = selectedFormats.includes(format);
+
+                      return (
+                        <button
+                          key={format}
+                          type="button"
+                          onClick={() =>
+                            onTogglePlatformFormat(platform.id, format)
+                          }
+                          aria-pressed={selected}
+                          className={`inline-flex min-h-10 items-center gap-2.5 rounded-sm border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
+                            selected
+                              ? "border-[#18005b] bg-[#18005b] text-white shadow-[0_3px_10px_rgba(24,0,91,0.15)]"
+                              : "border-[#dcd8d0] bg-[#fbfaf8] text-neutral-600 hover:border-[#18005b] hover:bg-white hover:text-[#18005b]"
+                          }`}
+                        >
+                          <span
+                            className={`flex h-4 w-4 shrink-0 items-center justify-center border transition-all duration-200 ${
+                              selected
+                                ? "border-white bg-white"
+                                : "border-[#aaa49a] bg-transparent"
+                            }`}
+                          >
+                            {selected && (
+                              <Check
+                                size={12}
+                                strokeWidth={3}
+                                className="text-[#18005b]"
+                              />
+                            )}
+                          </span>
+
+                          {format}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
             })}
           </div>
-        </div>
-      )
-    })}
-  </div>
-</Section>
+        </Section>
       )}
 
       {/* service: "", */}
@@ -380,8 +355,8 @@ export function CollaborationForm({
                 placeholder="e.g. Quest Mall, Kolkata"
                 value={form.eventLocation}
                 onChange={(event) => {
-                  clearValidationError()
-                  setForm({ ...form, eventLocation: event.target.value })
+                  clearValidationError();
+                  setForm({ ...form, eventLocation: event.target.value });
                 }}
                 required={isEventAppearance}
                 className={inputClass}
@@ -399,8 +374,8 @@ export function CollaborationForm({
                 type="date"
                 value={form.eventDate}
                 onChange={(event) => {
-                  clearValidationError()
-                  setForm({ ...form, eventDate: event.target.value })
+                  clearValidationError();
+                  setForm({ ...form, eventDate: event.target.value });
                 }}
                 required={isEventAppearance}
                 className={inputClass}
@@ -419,8 +394,8 @@ export function CollaborationForm({
                 placeholder="5 PM – 8 PM IST"
                 value={form.eventTiming}
                 onChange={(event) => {
-                  clearValidationError()
-                  setForm({ ...form, eventTiming: event.target.value })
+                  clearValidationError();
+                  setForm({ ...form, eventTiming: event.target.value });
                 }}
                 required={isEventAppearance}
                 className={inputClass}
@@ -433,19 +408,14 @@ export function CollaborationForm({
       {/* 04 — Campaign / Event Brief */}
       <Section
         number="04"
-        title={
-          isEventAppearance
-            ? "Event brief"
-            : "Your campaign brief"
-        }
+        title={isEventAppearance ? "Event brief" : "Your campaign brief"}
         description="Share your expectations so we can plan the collaboration."
         disabled={!hasSelectedService}
       >
         <label htmlFor="description" className={labelClass}>
           {isEventAppearance
             ? "Event Description, Dress Code & Appearance Role"
-            : "Campaign Brief, Timeline & Budget"}
-          {" "}
+            : "Campaign Brief, Timeline & Budget"}{" "}
           <span className="text-red-600">*</span>
         </label>
 
@@ -477,14 +447,9 @@ export function CollaborationForm({
           role="alert"
           className="flex items-start gap-3 border border-red-200 bg-red-50 p-4"
         >
-          <AlertCircle
-            size={17}
-            className="mt-0.5 shrink-0 text-red-600"
-          />
+          <AlertCircle size={17} className="mt-0.5 shrink-0 text-red-600" />
 
-          <p className="text-sm text-red-700">
-            {validationError}
-          </p>
+          <p className="text-sm text-red-700">{validationError}</p>
         </div>
       )}
 
@@ -496,9 +461,7 @@ export function CollaborationForm({
           className="group inline-flex w-full items-center justify-between gap-8 bg-[#222] px-6 py-5 text-[11px] font-semibold uppercase tracking-[1.8px] text-white transition-colors duration-300 hover:bg-[#18005b] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[280px]"
         >
           <span>
-            {loading
-              ? "Sending Proposal..."
-              : "Request Collaboration"}
+            {loading ? "Sending Proposal..." : "Request Collaboration"}
           </span>
 
           <ArrowUpRight
@@ -531,5 +494,5 @@ export function CollaborationForm({
         )}
       </div>
     </form>
-  )
+  );
 }
