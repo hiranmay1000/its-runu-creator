@@ -1,17 +1,21 @@
-import type { FormEvent, Dispatch, SetStateAction, ReactNode } from "react";
+import {
+  type FormEvent,
+  type Dispatch,
+  type SetStateAction,
+  type ReactNode,
+} from "react";
 
 import {
   AlertCircle,
   ArrowUpRight,
-  Check,
   CheckCircle,
   ChevronDown,
 } from "lucide-react";
 
-import { PLATFORM_CONFIGS, SERVICE_OPTIONS } from "../constants";
+import { SERVICE_OPTIONS } from "../constants";
 import type { CollabFormState, PlatformId, SubmitStatus } from "../types";
 
-import { PlatformLogo } from "./PlatformLogo";
+import { ServiceOptions } from "./service-option";
 
 interface CollaborationFormProps {
   form: CollabFormState;
@@ -112,7 +116,6 @@ export function CollaborationForm({
   isEventAppearance,
   totalSelectedFormats,
   validationError,
-  clearValidationError,
   loading,
   status,
   onServiceChange,
@@ -123,7 +126,7 @@ export function CollaborationForm({
     (option) => option.label === form.service,
   );
 
-  const hasSelectedService = Boolean(form.service?.trim() && selectedService);
+  const showCampaignScope = isPromotional;
 
   return (
     <form onSubmit={onSubmit} className="w-full max-w-4xl space-y-7">
@@ -183,7 +186,6 @@ export function CollaborationForm({
         <label htmlFor="collaborationService" className={labelClass}>
           Collaboration Service <span className="text-red-600">*</span>
         </label>
-
         <div className="relative">
           <select
             id="collaborationService"
@@ -210,208 +212,88 @@ export function CollaborationForm({
             className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-neutral-600"
           />
         </div>
-
         {selectedService?.subtitle && (
           <div className="mt-4 flex items-start gap-3 border-l-2 border-[#18005b] bg-[#f1eee8] px-4 py-3">
             <CheckCircle size={15} className="mt-0.5 shrink-0 text-[#18005b]" />
-
             <p className="text-xs leading-relaxed text-neutral-600">
               {selectedService.subtitle}
             </p>
           </div>
         )}
+        {/* Service-specific options */}
+        <div
+          className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${
+            selectedService
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+          aria-hidden={!selectedService}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div
+              className={`border-t border-[#eeebf1] pt-6 transition-transform duration-500 ${
+                selectedService ? "translate-y-0" : "-translate-y-3"
+              }`}
+              inert={!selectedService}
+            >
+              {selectedService && (
+                <ServiceOptions
+                  service={selectedService.label}
+                  form={form}
+                  totalSelectedFormats={totalSelectedFormats}
+                  onTogglePlatformFormat={onTogglePlatformFormat}
+                />
+              )}
+            </div>
+          </div>
+        </div>{" "}
       </Section>
 
-      {/* 03 — Campaign Scope */}
-      {isPromotional && (
-        <Section
-          number="03"
-          title="Campaign scope"
-          description="Choose the social platforms and content deliverables."
-          rightContent={
-            <span className="shrink-0 bg-[#18005b] px-3 py-1.5 text-xs font-bold tabular-nums text-white shadow-sm">
-              {totalSelectedFormats}
-            </span>
-          }
-        >
-          <div className="space-y-4">
-            {PLATFORM_CONFIGS.map((platform) => {
-              const selectedFormats = form.platformDeliverables[platform.id];
-
-              return (
-                <div
-                  key={platform.id}
-                  className="
-            border border-[#eeebf1]
-            bg-[#fdfcfe]
-            p-4 sm:p-6
-            shadow-[0_2px_10px_rgba(32,20,60,0.025)]
-            transition-all duration-300
-            hover:border-[#d9d2e5]
-            hover:bg-white
-            hover:shadow-[0_5px_18px_rgba(32,20,60,0.06)]
-          "
-                >
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#eeeae3] bg-[#fbfaf8]">
-                      <PlatformLogo
-                        platform={platform.id}
-                        active={selectedFormats.length > 0}
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-semibold text-[#222]">
-                        {platform.label}
-                      </h4>
-
-                      <p className="mt-0.5 text-xs text-neutral-500">
-                        {platform.tagline}
-                      </p>
-                    </div>
-
-                    <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
-                      {selectedFormats.length > 0
-                        ? `${selectedFormats.length} selected`
-                        : "Optional"}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {platform.formats.map((format) => {
-                      const selected = selectedFormats.includes(format);
-
-                      return (
-                        <button
-                          key={format}
-                          type="button"
-                          onClick={() =>
-                            onTogglePlatformFormat(platform.id, format)
-                          }
-                          aria-pressed={selected}
-                          className={`inline-flex min-h-10 items-center gap-2.5 rounded-sm border px-3 py-2.5 text-xs font-medium transition-all duration-200 ${
-                            selected
-                              ? "border-[#18005b] bg-[#18005b] text-white shadow-[0_3px_10px_rgba(24,0,91,0.15)]"
-                              : "border-[#dcd8d0] bg-[#fbfaf8] text-neutral-600 hover:border-[#18005b] hover:bg-white hover:text-[#18005b]"
-                          }`}
-                        >
-                          <span
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center border transition-all duration-200 ${
-                              selected
-                                ? "border-white bg-white"
-                                : "border-[#aaa49a] bg-transparent"
-                            }`}
-                          >
-                            {selected && (
-                              <Check
-                                size={12}
-                                strokeWidth={3}
-                                className="text-[#18005b]"
-                              />
-                            )}
-                          </span>
-
-                          {format}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Section>
-      )}
-
-      {/* service: "", */}
-
-      {/* <fieldset
-  disabled={!hasSelectedService}
-  aria-disabled={!hasSelectedService}
-  className={`min-w-0 space-y-6 border-0 p-0 m-0 transition-opacity duration-300 ${
-    !hasSelectedService
-      ? "pointer-events-none opacity-40"
-      : "opacity-100"
-  }`}
-></fieldset> */}
-
-      {/* 03 — Event Schedule */}
-      {isEventAppearance && (
-        <Section
-          number="03"
-          title="Event schedule"
-          description="Tell me where and when the event will take place."
-        >
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label htmlFor="eventLocation" className={labelClass}>
-                Location / Venue <span className="text-red-600">*</span>
-              </label>
-
-              <input
-                id="eventLocation"
-                name="eventLocation"
-                type="text"
-                placeholder="e.g. Quest Mall, Kolkata"
-                value={form.eventLocation}
-                onChange={(event) => {
-                  clearValidationError();
-                  setForm({ ...form, eventLocation: event.target.value });
-                }}
-                required={isEventAppearance}
-                className={inputClass}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="eventDate" className={labelClass}>
-                Event Date <span className="text-red-600">*</span>
-              </label>
-
-              <input
-                id="eventDate"
-                name="eventDate"
-                type="date"
-                value={form.eventDate}
-                onChange={(event) => {
-                  clearValidationError();
-                  setForm({ ...form, eventDate: event.target.value });
-                }}
-                required={isEventAppearance}
-                className={inputClass}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="eventTiming" className={labelClass}>
-                Event Timing <span className="text-red-600">*</span>
-              </label>
-
-              <input
-                id="eventTiming"
-                name="eventTiming"
-                type="text"
-                placeholder="5 PM – 8 PM IST"
-                value={form.eventTiming}
-                onChange={(event) => {
-                  clearValidationError();
-                  setForm({ ...form, eventTiming: event.target.value });
-                }}
-                required={isEventAppearance}
-                className={inputClass}
-              />
-            </div>
-          </div>
-        </Section>
-      )}
-
-      {/* 04 — Campaign / Event Brief */}
+      {/* 03 — Campaign / Event Brief */}
       <Section
-        number="04"
+        number="03"
         title={isEventAppearance ? "Event brief" : "Your campaign brief"}
         description="Share your expectations so we can plan the collaboration."
-        disabled={!hasSelectedService}
       >
+        {/* Animated Promotional Campaign Scope */}
+        <div
+          className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${
+            showCampaignScope
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+          aria-hidden={!showCampaignScope}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div
+              className={`pb-7 transition-transform duration-500 ease-in-out ${
+                showCampaignScope ? "translate-y-0" : "-translate-y-3"
+              }`}
+              inert={!showCampaignScope}
+            >
+              <div className="mb-6 border-b border-[#eeebf1] pb-6">
+                <div className="mb-5 flex items-start justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-bold text-[#222]">
+                      Campaign scope
+                    </h4>
+                    <p className="mt-1 text-xs text-neutral-500">
+                      Choose your social platforms and content deliverables.
+                    </p>
+                  </div>
+
+                  <span className="shrink-0 bg-[#18005b] px-3 py-1.5 text-xs font-bold tabular-nums text-white">
+                    {totalSelectedFormats} selected
+                  </span>
+                </div>
+
+                {/* KEEP YOUR EXISTING PLATFORM TABS AND DELIVERABLES JSX HERE */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Campaign / Event Description */}
         <label htmlFor="description" className={labelClass}>
           {isEventAppearance
             ? "Event Description, Dress Code & Appearance Role"
@@ -440,6 +322,16 @@ export function CollaborationForm({
           Include any important requirements, timelines or budget details.
         </p>
       </Section>
+
+      {/* <fieldset
+  disabled={!hasSelectedService}
+  aria-disabled={!hasSelectedService}
+  className={`min-w-0 space-y-6 border-0 p-0 m-0 transition-opacity duration-300 ${
+    !hasSelectedService
+      ? "pointer-events-none opacity-40"
+      : "opacity-100"
+  }`}
+></fieldset> */}
 
       {/* Validation */}
       {validationError && (

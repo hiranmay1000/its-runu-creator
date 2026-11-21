@@ -1,7 +1,7 @@
-import type { CollabFormState, PlatformConfig } from "./types"
+import type { CollabFormState, PlatformConfig } from "./types";
 
 export const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxECGjy8_BiVLovO2cXHh7XZFnS6ogtqgiQiliQXVhlujdVoKHsnVFtVWZHqyZch1g/exec"
+  "https://script.google.com/macros/s/AKfycbxECGjy8_BiVLovO2cXHh7XZFnS6ogtqgiQiliQXVhlujdVoKHsnVFtVWZHqyZch1g/exec";
 
 export const PLATFORM_CONFIGS: PlatformConfig[] = [
   {
@@ -38,7 +38,7 @@ export const PLATFORM_CONFIGS: PlatformConfig[] = [
       "Community Post",
     ],
   },
-]
+];
 
 export const SERVICE_OPTIONS = [
   {
@@ -61,14 +61,14 @@ export const SERVICE_OPTIONS = [
     label: "Event & Launch Appearance",
     subtitle: "In-person store launch, live coverage & hosting",
   },
-] as const
+] as const;
 
 export function createInitialCollabFormState(): CollabFormState {
   return {
     name: "",
     brand: "",
     email: "",
-    service: "Promotional Content",
+    service: "",
     platformDeliverables: {
       instagram: ["Instagram Reel"],
       facebook: [],
@@ -78,5 +78,5 @@ export function createInitialCollabFormState(): CollabFormState {
     eventDate: "",
     eventTiming: "",
     description: "",
-  }
+  };
 }
